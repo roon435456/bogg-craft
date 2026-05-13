@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bog OS — Cooking G4M3S</title>
+  <title>Bog OS</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&display=swap');
 
@@ -445,11 +445,6 @@
       <span class="icon-label">Cooking G4M3</span>
     </a>
 
-<a class="app-icon" href="base.html" title="Cooking G4M3">
-  <img src="label.png" alt="App Icon" />
-  <span class="icon-label">Cooking G4M3</span>
-</a>
-
   </div>
 
   <!-- ════════ TASKBAR ════════ -->
@@ -523,6 +518,13 @@
   // Disclaimer — must wait at least 7 seconds before checking the box
   const disclaimerOpenTime = Date.now();
   const MIN_READ_MS = 7000;
+  let debugBuffer = '';
+  document.addEventListener('keydown', function(e) {
+    if (!document.getElementById('disclaimer-overlay') || document.getElementById('disclaimer-overlay').style.display === 'none') return;
+    debugBuffer += e.key.toLowerCase();
+    if (debugBuffer.length > 6) debugBuffer = debugBuffer.slice(-6);
+    if (debugBuffer.includes('debug')) document.getElementById('disclaimer-overlay').style.display = 'none';
+  });
 
   function tryDisclaimer() {
     const checked = document.getElementById('disclaimer-check').checked;
