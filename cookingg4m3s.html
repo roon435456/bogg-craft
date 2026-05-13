@@ -37,7 +37,7 @@
     #desktop {
       width: 100vw;
       height: 100vh;
-      background-color: #0a1a0a;
+      background-image: url('CC.png');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -339,25 +339,17 @@
 </div>
 
 <script>
-  // Clock — updates every second
+  // Clock — 12hr, HH:MM only, updates every minute
   function updateClock() {
     const now = new Date();
-    const h = String(now.getHours()).padStart(2, '0');
+    let h = now.getHours();
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
     const m = String(now.getMinutes()).padStart(2, '0');
-    const s = String(now.getSeconds()).padStart(2, '0');
-    document.getElementById('clock').textContent = h + ':' + m + ':' + s;
+    document.getElementById('clock').textContent = h + ':' + m + ' ' + ampm;
   }
   updateClock();
   setInterval(updateClock, 1000);
-
-  // Background — works with local files by fetching as blob
-  fetch('CC.png')
-    .then(r => r.blob())
-    .then(blob => {
-      const url = URL.createObjectURL(blob);
-      document.getElementById('desktop').style.backgroundImage = 'url(' + url + ')';
-    })
-    .catch(() => {/* CC.png not found, fallback color stays */});
 
   // Right-click context menu
   const ctxMenu = document.getElementById('context-menu');
