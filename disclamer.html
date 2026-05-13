@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Disclaimer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #fff;
+      color: #000;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      margin-bottom: 1.5rem;
+    }
+
+    p {
+      max-width: 420px;
+      text-align: center;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 0.6rem;
+    }
+
+    .agree {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin: 1.4rem 0 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    /* UIverse checkbox */
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container input {
+      position: relative;
+      opacity: 1;
+      -webkit-appearance: none;
+      cursor: pointer;
+      height: 50px;
+      width: 50px;
+      box-shadow: -10px -10px 15px rgba(255,255,255,0.5), 10px 10px 15px rgba(0,0,70,0.12);
+      border-radius: 50%;
+      border: 8px solid #ececec;
+      outline: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: .5s;
+    }
+
+    .container input::after {
+      transition: .5s;
+      font-family: monospace;
+      content: '';
+      color: #7a7a7a;
+      font-size: 25px;
+      left: 0.45em;
+      top: 0.25em;
+      width: 0.25em;
+      height: 0.5em;
+      border: solid #7a7a7a;
+      border-width: 0 0.15em 0.15em 0;
+      transform: rotate(45deg);
+      position: absolute;
+    }
+
+    .container input:checked {
+      box-shadow: -10px -10px 15px rgba(255,255,255,0.5), 10px 10px 15px rgba(70,70,70,0.12),
+        inset -10px -10px 15px rgba(255,255,255,0.5), inset 10px 10px 15px rgba(70,70,70,0.12);
+    }
+
+    .container input:checked::after {
+      border: solid #15e38a;
+      border-width: 0 0.15em 0.15em 0;
+      transform: rotate(45deg);
+    }
+
+    .toast {
+      display: none;
+      font-size: 0.85rem;
+      color: red;
+      margin-bottom: 0.6rem;
+    }
+
+    .toast.show { display: block; }
+
+    /* UIverse button */
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      outline: none;
+      cursor: pointer;
+      width: 150px;
+      height: 50px;
+      background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%);
+      border-radius: 30px;
+      border: 1px solid #8F9092;
+      transition: all 0.2s ease;
+      font-family: "Source Sans Pro", sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: #606060;
+      text-shadow: 0 1px #fff;
+      margin-top: 0.4rem;
+    }
+
+    button:hover  { box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 3px 3px #CECFD1; }
+    button:active { box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 5px 3px #999, inset 0 0 30px #aaa; }
+    button:focus  { box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 5px 3px #999, inset 0 0 30px #aaa; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+  </style>
+</head>
+<body>
+
+  <h1>Disclaimer</h1>
+
+  <p>Website created by Cam! Please do not play during class! You will get caught, and you will be punished!</p>
+  <p>I do not take any responsibility of you getting in trouble. They can see you on GoGuardian. So, dont break the rules.</p>
+  <p>It would also be appreciated if you dont leak the site. Thanks.</p>
+
+  <div class="agree">
+    <div class="container">
+      <input type="checkbox" id="cb">
+    </div>
+    <label for="cb">I've read the rules</label>
+  </div>
+
+  <div class="toast" id="toast">You haven't read the Rules. You're good lol, just please read!</div>
+
+  <button id="btn" disabled onclick="go()">Continue</button>
+
+  <script>
+    let ready = false;
+    const cb = document.getElementById('cb');
+    const btn = document.getElementById('btn');
+    const toast = document.getElementById('toast');
+
+    setTimeout(() => { ready = true; sync(); }, 5500);
+
+    cb.addEventListener('change', () => { toast.classList.remove('show'); sync(); });
+
+    function sync() { btn.disabled = !(ready && cb.checked); }
+
+    function go() {
+      if (!ready || !cb.checked) { toast.classList.add('show'); return; }
+      window.location.href = 'bogg-craft.html';
+    }
+  </script>
+</body>
+</html>
