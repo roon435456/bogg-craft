@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Hearthside Cooking Guide</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rye&family=Cabin:wght@400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bark:    #2A1608;
+      --log:     #4A2510;
+      --plank:   #6B3E1A;
+      --ember:   #C84B11;
+      --flame:   #E87722;
+      --glow:    #F5A623;
+      --ash:     #D4B896;
+      --fog:     #EDE0CC;
+      --moss:    #3D5229;
+      --pine:    #1E2E14;
+      --smoke:   #B8A898;
+      --cream:   #FDF5E8;
+    }
+
+    body {
+      font-family: 'Cabin', sans-serif;
+      background-color: var(--pine);
+      background-image:
+        repeating-linear-gradient(170deg, transparent 0, transparent 8px, rgba(90,50,10,0.025) 8px, rgba(90,50,10,0.025) 9px),
+        repeating-linear-gradient(10deg,  transparent 0, transparent 20px, rgba(0,0,0,0.015) 20px, rgba(0,0,0,0.015) 21px),
+        radial-gradient(ellipse at 50% 100%, #3d2200 0%, #1a2610 50%, #0e1a08 100%);
+      color: var(--fog);
+      line-height: 1.75;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Fireplace glow */
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(232,119,34,0.18) 0%, rgba(200,75,17,0.07) 45%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      animation: flicker 4s ease-in-out infinite;
+    }
+
+    @keyframes flicker {
+      0%,100% { opacity:1; }
+      35% { opacity:0.7; }
+      65% { opacity:0.88; }
+    }
+
+    /* Floating embers */
+    .ember {
+      position: fixed;
+      bottom: 0;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--glow);
+      box-shadow: 0 0 5px 2px rgba(245,166,35,0.5);
+      pointer-events: none;
+      z-index: 1;
+      animation: rise linear infinite;
+    }
+    @keyframes rise {
+      0%   { transform: translateY(0) translateX(0) scale(1); opacity: 1; }
+      60%  { transform: translateY(-55vh) translateX(15px) scale(0.6); opacity: 0.5; }
+      100% { transform: translateY(-95vh) translateX(-8px) scale(0.1); opacity: 0; }
+    }
+
+    /* ====== HEADER ====== */
+    header {
+      position: relative;
+      z-index: 10;
+      background:
+        repeating-linear-gradient(175deg, transparent 0, transparent 4px, rgba(0,0,0,0.06) 4px, rgba(0,0,0,0.06) 5px),
+        linear-gradient(180deg, #1e0d02 0%, #2e1608 60%, #3a1e0a 100%);
+      border-bottom: 3px solid var(--plank);
+      text-align: center;
+      padding: 3rem 2rem 2rem;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.6), 0 0 60px rgba(200,75,17,0.08);
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--ember), var(--glow), var(--ember), transparent);
+    }
+
+    .header-badge {
+      font-family: 'Rye', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      color: rgba(245,166,35,0.5);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    header h1 {
+      font-family: 'Rye', serif;
+      font-size: 3.4rem;
+      font-weight: normal;
+      color: var(--glow);
+      text-shadow: 0 0 30px rgba(245,166,35,0.35), 0 3px 8px rgba(0,0,0,0.8);
+      letter-spacing: 0.04em;
+      margin-bottom: 0.5rem;
+    }
+
+    .header-sub {
+      font-size: 0.82rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      font-family: 'Cabin', sans-serif;
+    }
+
+    /* ====== NAV ====== */
+    nav {
+      position: relative;
+      z-index: 10;
+      background: var(--bark);
+      border-bottom: 2px solid var(--log);
+      padding: 0.7rem 2rem;
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+    }
+
+    nav a {
+      color: var(--glow);
+      text-decoration: none;
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-family: 'Cabin', sans-serif;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--flame); }
+
+    /* ====== BANNER ====== */
+    .banner {
+      position: relative;
+      z-index: 10;
+      background: linear-gradient(90deg, var(--ember), var(--flame), var(--ember));
+      color: var(--cream);
+      text-align: center;
+      padding: 0.55rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    /* ====== LAYOUT ====== */
+    .main-layout {
+      position: relative;
+      z-index: 5;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr 290px;
+      gap: 2.5rem;
+    }
+
+    /* ====== SHARED CARD ====== */
+    .wood-card {
+      background:
+        repeating-linear-gradient(175deg, transparent 0, transparent 3px, rgba(255,255,255,0.007) 3px, rgba(255,255,255,0.007) 4px),
+        linear-gradient(170deg, #2e1a08 0%, #3a2210 50%, #271508 100%);
+      border: 1px solid var(--plank);
+      border-radius: 6px;
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,220,150,0.05);
+    }
+
+    .wood-card::before {
+      content: '';
+      display: block;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--ember), transparent);
+      margin: -1.75rem -1.75rem 1.5rem;
+      border-radius: 6px 6px 0 0;
+    }
+
+    /* ====== HEADINGS ====== */
+    h2 {
+      font-family: 'Rye', serif;
+      font-size: 1.6rem;
+      font-weight: normal;
+      color: var(--glow);
+      text-shadow: 0 0 15px rgba(245,166,35,0.2);
+      border-bottom: 1px solid rgba(107,62,26,0.6);
+      padding-bottom: 0.4rem;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--flame);
+      font-weight: 400;
+      margin: 1.4rem 0 0.5rem;
+    }
+
+    p { margin-bottom: 0.9rem; font-size: 0.95rem; color: var(--ash); }
+
+    /* ====== INTRO BOX ====== */
+    .intro-box {
+      background: rgba(0,0,0,0.25);
+      border-left: 3px solid var(--ember);
+      border-radius: 0 4px 4px 0;
+      padding: 1.1rem 1.4rem;
+      margin-bottom: 1.8rem;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--fog);
+      line-height: 1.7;
+    }
+
+    /* ====== RECIPE META ====== */
+    .recipe-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin: 0.6rem 0 1.1rem;
+      font-size: 0.8rem;
+      color: var(--smoke);
+      font-family: 'Cabin', sans-serif;
+    }
+
+    .meta-pill {
+      background: rgba(200,75,17,0.15);
+      border: 1px solid rgba(200,75,17,0.35);
+      border-radius: 20px;
+      padding: 0.2rem 0.75rem;
+      color: var(--ash);
+    }
+
+    /* ====== TWO COL ====== */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ====== LISTS ====== */
+    .ingredients-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .ingredients-list li {
+      padding: 0.3rem 0;
+      border-bottom: 1px solid rgba(107,62,26,0.3);
+      font-size: 0.88rem;
+      color: var(--ash);
+    }
+
+    .ingredients-list li::before {
+      content: "▸ ";
+      color: var(--ember);
+    }
+
+    .steps-list {
+      list-style: none;
+      padding: 0;
+      counter-reset: steps;
+    }
+
+    .steps-list li {
+      counter-increment: steps;
+      padding: 0.55rem 0 0.55rem 2.4rem;
+      position: relative;
+      border-bottom: 1px solid rgba(107,62,26,0.25);
+      font-size: 0.88rem;
+      color: var(--ash);
+    }
+
+    .steps-list li::before {
+      content: counter(steps);
+      position: absolute;
+      left: 0;
+      top: 0.55rem;
+      width: 1.55rem;
+      height: 1.55rem;
+      background: linear-gradient(135deg, var(--ember), var(--flame));
+      color: var(--cream);
+      border-radius: 50%;
+      text-align: center;
+      line-height: 1.55rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    /* ====== TIP BOX ====== */
+    .tip-box {
+      background: rgba(200,75,17,0.1);
+      border: 1px solid rgba(200,75,17,0.3);
+      border-radius: 4px;
+      padding: 0.9rem 1.2rem;
+      margin-top: 1.1rem;
+      font-size: 0.88rem;
+      color: var(--ash);
+    }
+
+    .tip-box strong {
+      color: var(--glow);
+      display: block;
+      margin-bottom: 0.3rem;
+      font-family: 'Rye', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* ====== TECHNIQUE GRID ====== */
+    .technique-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .technique-item {
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(107,62,26,0.45);
+      border-top: 2px solid var(--ember);
+      border-radius: 4px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .technique-item .icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
+
+    .technique-item h4 {
+      font-family: 'Rye', serif;
+      font-size: 0.72rem;
+      color: var(--glow);
+      margin-bottom: 0.35rem;
+      letter-spacing: 0.04em;
+    }
+
+    .technique-item p {
+      font-size: 0.78rem;
+      color: var(--smoke);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* ====== PULL QUOTE ====== */
+    .pull-quote {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.3rem;
+      color: var(--flame);
+      text-align: center;
+      border-top: 2px solid rgba(200,75,17,0.4);
+      border-bottom: 2px solid rgba(200,75,17,0.4);
+      padding: 1.2rem 2rem;
+      margin: 2rem 0;
+      line-height: 1.5;
+    }
+
+    /* ====== DIVIDER ====== */
+    .divider {
+      text-align: center;
+      color: var(--ember);
+      font-size: 1rem;
+      letter-spacing: 0.6em;
+      margin: 1.8rem 0;
+      opacity: 0.7;
+    }
+
+    /* ====== GLOSSARY ====== */
+    .glossary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem 1.5rem;
+    }
+
+    .glossary-item {
+      border-bottom: 1px solid rgba(107,62,26,0.35);
+      padding: 0.5rem 0;
+      font-size: 0.88rem;
+      color: var(--ash);
+    }
+
+    .glossary-item strong {
+      color: var(--glow);
+      display: block;
+      font-family: 'Rye', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.2rem;
+    }
+
+    /* ====== SIDEBAR ====== */
+    .sidebar { height: fit-content; }
+
+    .sidebar-box {
+      background:
+        repeating-linear-gradient(175deg, transparent 0, transparent 3px, rgba(255,255,255,0.005) 3px, rgba(255,255,255,0.005) 4px),
+        linear-gradient(170deg, #2e1a08, #271508);
+      border: 1px solid var(--plank);
+      border-radius: 6px;
+      margin-bottom: 1.4rem;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+    }
+
+    .sb-header {
+      background: linear-gradient(90deg, #1e0d02, #2e1608);
+      border-bottom: 1px solid var(--plank);
+      padding: 0.55rem 1rem;
+      font-family: 'Rye', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--glow);
+      text-transform: uppercase;
+    }
+
+    .sb-body {
+      padding: 1rem;
+      font-size: 0.85rem;
+    }
+
+    .sb-body ul {
+      padding-left: 1.1rem;
+    }
+
+    .sb-body li {
+      margin-bottom: 0.35rem;
+      color: var(--ash);
+      font-size: 0.83rem;
+    }
+
+    .temp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .temp-table th {
+      background: rgba(0,0,0,0.3);
+      color: var(--flame);
+      padding: 0.35rem 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(107,62,26,0.5);
+      font-family: 'Cabin', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .temp-table td {
+      padding: 0.3rem 0.5rem;
+      border-bottom: 1px solid rgba(107,62,26,0.2);
+      color: var(--ash);
+    }
+
+    .temp-table tr:last-child td { border-bottom: none; }
+
+    .sb-body p {
+      font-size: 0.83rem;
+      color: var(--ash);
+      margin-bottom: 0.45rem;
+    }
+
+    /* ====== FOOTER ====== */
+    footer {
+      position: relative;
+      z-index: 10;
+      background:
+        repeating-linear-gradient(175deg, transparent 0, transparent 4px, rgba(0,0,0,0.07) 4px, rgba(0,0,0,0.07) 5px),
+        linear-gradient(180deg, #1e0d02, #140803);
+      border-top: 2px solid var(--log);
+      text-align: center;
+      padding: 2.5rem 2rem;
+      color: var(--smoke);
+      font-size: 0.8rem;
+      line-height: 1.9;
+    }
+
+    footer::before {
+      content: '';
+      display: block;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--ember), var(--glow), var(--ember), transparent);
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-title {
+      font-family: 'Rye', serif;
+      font-size: 1.3rem;
+      color: var(--glow);
+      text-shadow: 0 0 15px rgba(245,166,35,0.3);
+      margin-bottom: 0.6rem;
+    }
+
+    /* UIverse button */
+    .learn-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      outline: none;
+      cursor: pointer;
+      width: 150px;
+      height: 50px;
+      background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%);
+      border-radius: 30px;
+      border: 1px solid #8F9092;
+      transition: all 0.2s ease;
+      font-family: 'Cabin', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: #606060;
+      text-shadow: 0 1px #fff;
+      text-decoration: none;
+      margin-top: 1.25rem;
+    }
+
+    .learn-btn:hover {
+      box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 3px 3px #CECFD1;
+    }
+
+    .learn-btn:active {
+      box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 5px 3px #999, inset 0 0 30px #aaa;
+    }
+
+    @media (max-width: 760px) {
+      .main-layout { grid-template-columns: 1fr; }
+      .two-col { grid-template-columns: 1fr; }
+      .technique-grid { grid-template-columns: 1fr 1fr; }
+      .glossary-grid { grid-template-columns: 1fr; }
+      header h1 { font-size: 2.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ember" style="left:8%;  animation-duration:7s;   animation-delay:0s;"></div>
+  <div class="ember" style="left:22%; animation-duration:9s;   animation-delay:1.5s; background:#E87722;"></div>
+  <div class="ember" style="left:48%; animation-duration:6.5s; animation-delay:0.7s;"></div>
+  <div class="ember" style="left:66%; animation-duration:10s;  animation-delay:2.8s;"></div>
+  <div class="ember" style="left:80%; animation-duration:8.5s; animation-delay:3.5s; background:#C84B11;"></div>
+  <div class="ember" style="left:91%; animation-duration:7.8s; animation-delay:5s;"></div>
+
+  <header>
+    <div class="header-badge">&#x2B21; The Definitive Fireside Reference &#x2B21;</div>
+    <h1>The Hearthside Cooking Guide</h1>
+    <div class="header-sub">Cabin Edition &mdash; All Techniques, Flavors & the Mysteries of the Open Fire</div>
+  </header>
+
+  <nav>
+    <a href="#">Techniques</a>
+    <a href="#">Recipes</a>
+    <a href="#">Ingredients</a>
+    <a href="#">Equipment</a>
+    <a href="#">Fire & Smoke</a>
+    <a href="#">Seasonal Menus</a>
+    <a href="#">Ask the Cook</a>
+  </nav>
+
+  <div class="banner">
+    🏕️ Winner of the Imaginary Fireside Excellence Award — Seven Consecutive Years — Trusted by Roughly 4 Million Cabin Cooks (probably)
+  </div>
+
+  <div class="main-layout">
+    <main>
+
+      <div class="intro-box">
+        "Cooking over real fire is not a technique. It is a conversation — between wood and heat, between patience and hunger, between whoever you were before you sat down by these flames and whoever you will be when you stand up again."
+        — Introduction, pg. 1
+      </div>
+
+      <!-- RECIPE 1 -->
+      <div class="wood-card">
+        <h2>Cast Iron Coq au Vin</h2>
+        <div class="recipe-meta">
+          <span class="meta-pill">⏱ Prep: 40 min</span>
+          <span class="meta-pill">🔥 Cook: 1 hr 45 min</span>
+          <span class="meta-pill">🪵 Serves: 4–6</span>
+          <span class="meta-pill">⭐ Intermediate</span>
+        </div>
+        <p>Few dishes feel more at home in a cast iron pot than a properly made coq au vin. The heavy pan holds heat evenly — it does not rush, it does not panic — and that steady, unhurried warmth is exactly what this dish requires. The smell of it filling a cold cabin is, frankly, half the reason to make it at all.</p>
+        <p>The chicken must be of good quality. This is not a suggestion. A bird that has lived a full and vigorous life rewards you with flavor that no amount of wine can fake. If you sourced it well, you are already halfway there. If not, we will say nothing more about it.</p>
+
+        <div class="two-col">
+          <div>
+            <h3>What You'll Need</h3>
+            <ul class="ingredients-list">
+              <li>1 whole chicken, cut into 8 pieces (~1.8kg)</li>
+              <li>750ml full-bodied red wine — Burgundy or Rhône</li>
+              <li>200g smoked lardons or thick-cut bacon</li>
+              <li>250g pearl onions, peeled</li>
+              <li>300g cremini mushrooms, halved</li>
+              <li>4 cloves garlic, crushed</li>
+              <li>2 sprigs fresh thyme</li>
+              <li>2 bay leaves, 1 sprig rosemary</li>
+              <li>3 tbsp tomato paste</li>
+              <li>500ml good chicken stock</li>
+              <li>3 tbsp all-purpose flour</li>
+              <li>2 tbsp unsalted butter</li>
+              <li>3 tbsp neutral oil</li>
+              <li>Salt and coarse black pepper</li>
+              <li>Fresh parsley, chopped, to finish</li>
+            </ul>
+          </div>
+          <div>
+            <h3>How to Make It</h3>
+            <ol class="steps-list">
+              <li>Season chicken generously on all sides with salt and pepper. Do not be timid. Under-seasoned food is one of the great avoidable sorrows.</li>
+              <li>In your cast iron over medium-high heat, render lardons until golden and crisp. Remove and set aside, leaving fat in the pan.</li>
+              <li>Working in batches — never crowd the pan, it causes steaming instead of browning — sear chicken pieces 4 minutes per side until deeply golden.</li>
+              <li>Remove chicken. Add butter, sauté onions and mushrooms until golden. Add garlic, cook one minute more.</li>
+              <li>Dust everything with flour, stir to coat. Add tomato paste, cook 2 minutes stirring constantly.</li>
+              <li>Return chicken and lardons. Pour over wine and stock. Add herbs. Bring to a boil, then reduce to a slow, comfortable simmer.</li>
+              <li>Cover and cook 1 hour 15 minutes, turning chicken once at the halfway point.</li>
+              <li>Adjust seasoning, remove herb sprigs. Serve in warmed bowls with crusty bread or mashed potatoes.</li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="tip-box">
+          <strong>🔥 Fireside Note</strong>
+          Cook with wine you would pour into a glass and drink. The old advice about cheap cooking wine is a myth told by people who haven't tasted the difference. A reliable village Burgundy is all you need — nothing grand, nothing forgettable.
+        </div>
+      </div>
+
+      <!-- TECHNIQUES -->
+      <div class="wood-card">
+        <h2>Techniques Every Cabin Cook Must Know</h2>
+        <p>The following techniques form the bedrock of any serious cook's knowledge. Master these and you can approach nearly any recipe with confidence — and a certain quiet assurance that is, in its own way, deeply satisfying around a fire.</p>
+
+        <div class="technique-grid">
+          <div class="technique-item">
+            <div class="icon">🔪</div>
+            <h4>Brunoise</h4>
+            <p>Cutting vegetables into perfect 2mm cubes. Requires a sharp knife, patience, and many practice carrots before achieving any elegance.</p>
+          </div>
+          <div class="technique-item">
+            <div class="icon">🍳</div>
+            <h4>Sauté</h4>
+            <p>High heat, minimal fat, constant motion. The pan must be hot before the food enters. This is critical. A cold pan is an insult to the ingredient.</p>
+          </div>
+          <div class="technique-item">
+            <div class="icon">🌡️</div>
+            <h4>Sous Vide</h4>
+            <p>Precision cooking in a temperature-controlled bath. Yields remarkably consistent results. Popular among those who have exchanged fire for science.</p>
+          </div>
+          <div class="technique-item">
+            <div class="icon">🥄</div>
+            <h4>Emulsify</h4>
+            <p>Binding fat and water into a stable sauce. Hollandaise, mayonnaise, vinaigrette — all emulsions, all worth learning inside and out.</p>
+          </div>
+          <div class="technique-item">
+            <div class="icon">🫕</div>
+            <h4>Braising</h4>
+            <p>Long, slow cooking in a small amount of liquid. Transforms the toughest cuts into the most tender results. Time is the primary ingredient here.</p>
+          </div>
+          <div class="technique-item">
+            <div class="icon">🔥</div>
+            <h4>Flambé</h4>
+            <p>Add alcohol, ignite it. Burns off raw spirit flavor, caramelizes sugars. Also impresses whoever is watching from across the cabin considerably.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="pull-quote">
+        "The difference between a good dish and a great one is almost always attention — to seasoning, to heat, to the precise moment when something is ready and asks to be removed from the fire."
+      </div>
+
+      <!-- RECIPE 2 -->
+      <div class="wood-card">
+        <h2>Skillet Tarte Tatin</h2>
+        <div class="recipe-meta">
+          <span class="meta-pill">⏱ Prep: 25 min</span>
+          <span class="meta-pill">🔥 Cook: 45 min</span>
+          <span class="meta-pill">🪵 Serves: 6–8</span>
+          <span class="meta-pill">⭐ Moderate</span>
+        </div>
+        <p>The tarte Tatin was, famously, an accident — or so the story goes. The Tatin sisters, proprietors of a hotel in the Loire Valley, supposedly invented it by mistake sometime in the 1880s, though food historians debate the precise details with great energy and no visible sign of resolution.</p>
+        <p>What is not debatable is the result: caramelized apples, sticky and soft, atop a buttery pastry crust, presented upside-down so that the dark caramel runs down the sides. This is the sort of dessert that makes people go quiet at the table. The good kind of quiet.</p>
+
+        <div class="two-col">
+          <div>
+            <h3>What You'll Need</h3>
+            <ul class="ingredients-list">
+              <li>1.2kg firm apples (Granny Smith or Braeburn)</li>
+              <li>150g caster sugar</li>
+              <li>80g unsalted butter, cubed</li>
+              <li>1 vanilla pod, seeds scraped</li>
+              <li>Pinch of fleur de sel</li>
+              <li>½ tsp ground cinnamon</li>
+              <li>1 sheet all-butter puff pastry (320g)</li>
+              <li>Crème fraîche or vanilla ice cream to serve</li>
+            </ul>
+          </div>
+          <div>
+            <h3>How to Make It</h3>
+            <ol class="steps-list">
+              <li>Peel, core, quarter apples. Toss with half the sugar, rest 20 minutes, drain well. Excess moisture is the enemy of good caramel.</li>
+              <li>In a 24cm ovenproof skillet, melt butter over medium heat. Add remaining sugar; cook without stirring until deep amber, about 10–12 minutes.</li>
+              <li>Off heat. Add vanilla and salt. Pack apple quarters tightly in concentric circles — they shrink during cooking, so crowd them in.</li>
+              <li>Return to medium heat, cook apples 15 minutes until softened. Remove and cool slightly.</li>
+              <li>Preheat oven to 200°C. Drape pastry over apples, tuck edges around the fruit.</li>
+              <li>Bake 25–30 minutes until pastry is deep golden. Cool 10 minutes — not longer, or caramel sets — then invert onto a plate with confidence and commitment.</li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="tip-box">
+          <strong>🔥 On the Subject of Caramel</strong>
+          Caramel demands your full attention. Do not stir it, do not check your messages, do not hold a conversation while it cooks. The window between perfect amber and a substance that requires you to throw away the pan is measured in seconds. We have all been there. It does not get easier. It just gets faster to notice.
+        </div>
+      </div>
+
+      <div class="divider">✦ ✦ ✦</div>
+
+      <!-- ARTICLE -->
+      <div class="wood-card">
+        <h2>The Philosophy of Salt</h2>
+        <p>Of all the ingredients in any cook's pantry, salt is the most democratic, the most transformative, and the most frequently misunderstood. Salt does not merely make food taste salty. This is a common misconception that has led well-intentioned home cooks to under-season their food for decades, resulting in flat, apologetic meals served to people too polite to say a word.</p>
+        <p>What salt actually does is considerably more interesting. It suppresses bitterness, amplifies aromatics, enhances sweetness, and draws out the deep savory quality that makes food feel satisfying rather than merely edible. A chocolate cake without salt tastes one-dimensional. A tomato sauce without enough salt tastes raw and somehow unfinished, as though the cook left the room and forgot to come back.</p>
+
+        <h3>A Note on Pasta Water</h3>
+        <p>Your pasta water should taste like the sea. This instruction — repeated in cookbooks until it has become a cliché — is nonetheless correct. A large pot of water requires two to three tablespoons of salt to be properly seasoned. This sounds like too much. It is not. Cooks who have spent years under-salting pasta water often describe the moment they eat properly seasoned pasta in a good Italian kitchen as a small awakening. You can have that awakening at home. Tonight, even.</p>
+
+        <h3>The Four Salts Worth Knowing</h3>
+        <p>Fine sea salt for everyday cooking and pasta water. Kosher salt for brining and dry rubs, where its large crystals allow precision. Fleur de sel or Maldon flakes for finishing — scattered over a steak or a ripe tomato at the last moment. Smoked salt, used sparingly, for those times you want depth without lighting an actual fire. Though if you are reading this guide, you probably have access to an actual fire, and that is better still.</p>
+      </div>
+
+      <!-- GLOSSARY -->
+      <div class="wood-card">
+        <h2>A Glossary of Culinary Terms</h2>
+        <p>The professional kitchen speaks in a specialized language. The following definitions provide a working vocabulary sufficient for understanding most recipes — and, if deployed in conversation, conveying a convincing impression of expertise.</p>
+        <div class="glossary-grid">
+          <div class="glossary-item"><strong>Mise en Place</strong> "Everything in its place." All ingredients measured and prepped before cooking begins. The foundation of the professional kitchen and a philosophy applicable, one suspects, to many other things.</div>
+          <div class="glossary-item"><strong>Deglaze</strong> Adding liquid to a hot pan after searing in order to dissolve the caramelized fond. The resulting liquid is the beginning of almost every great pan sauce in the history of cooking.</div>
+          <div class="glossary-item"><strong>Julienne</strong> Long, thin matchstick cuts about 3mm square. Used for vegetables in stir-fries, salads, and garnishes. Requires more patience than most people expect the first time.</div>
+          <div class="glossary-item"><strong>Fond</strong> The browned bits left in a pan after searing. Not debris — concentrated flavor. Treat them with the reverence they deserve. Scrape them up. Build something from them.</div>
+          <div class="glossary-item"><strong>Blanch & Shock</strong> Brief boiling followed by ice water to halt cooking instantly. Preserves color, texture, nutrients. A simple technique that makes vegetables look significantly more intentional.</div>
+          <div class="glossary-item"><strong>Beurre Blanc</strong> A French butter sauce: reduced white wine and shallots, finished with cold butter whisked in piece by piece. Difficult the first time. Impressive every time after that.</div>
+          <div class="glossary-item"><strong>Chiffonade</strong> Stacking, rolling, and thinly slicing leafy herbs into ribbons. Used for basil and mint primarily. A technical name for something most people do without knowing it has a name.</div>
+          <div class="glossary-item"><strong>Resting</strong> Allowing cooked meat to sit before cutting so that juices redistribute. Cutting too soon results in those juices running onto the board instead of staying in the meat. A small patience with a large reward.</div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+      <div class="sidebar-box">
+        <div class="sb-header">Internal Temperatures</div>
+        <div class="sb-body">
+          <table class="temp-table">
+            <thead>
+              <tr><th>Protein</th><th>Done</th><th>°C</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Beef</td><td>Rare</td><td>52°C</td></tr>
+              <tr><td>Beef</td><td>Medium</td><td>63°C</td></tr>
+              <tr><td>Beef</td><td>Well</td><td>74°C</td></tr>
+              <tr><td>Chicken</td><td>Safe</td><td>74°C</td></tr>
+              <tr><td>Pork</td><td>Safe</td><td>71°C</td></tr>
+              <tr><td>Fish</td><td>Done</td><td>63°C</td></tr>
+              <tr><td>Lamb</td><td>Medium</td><td>63°C</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="sidebar-box">
+        <div class="sb-header">Cabin Pantry Essentials</div>
+        <div class="sb-body">
+          <ul>
+            <li>Extra-virgin olive oil (a good bottle)</li>
+            <li>Fleur de sel & black pepper</li>
+            <li>Dijon mustard</li>
+            <li>Canned San Marzano tomatoes</li>
+            <li>Dried pasta — several shapes</li>
+            <li>Arborio rice</li>
+            <li>Capers & anchovies</li>
+            <li>Sherry vinegar</li>
+            <li>Dried porcini mushrooms</li>
+            <li>Good soy sauce & fish sauce</li>
+            <li>Raw honey</li>
+            <li>Unsalted butter — always</li>
+            <li>Parmesan, a whole wedge</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="sidebar-box">
+        <div class="sb-header">Conversion Chart</div>
+        <div class="sb-body">
+          <table class="temp-table">
+            <thead><tr><th>US</th><th>Metric</th></tr></thead>
+            <tbody>
+              <tr><td>1 tsp</td><td>5ml</td></tr>
+              <tr><td>1 tbsp</td><td>15ml</td></tr>
+              <tr><td>1 cup</td><td>240ml</td></tr>
+              <tr><td>1 oz</td><td>28g</td></tr>
+              <tr><td>1 lb</td><td>454g</td></tr>
+              <tr><td>350°F</td><td>175°C</td></tr>
+              <tr><td>400°F</td><td>200°C</td></tr>
+              <tr><td>425°F</td><td>220°C</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="sidebar-box">
+        <div class="sb-header">The 5 Mother Sauces</div>
+        <div class="sb-body">
+          <p><strong style="color:var(--flame);">Béchamel</strong> — Butter, flour, milk. Foundation of gratins and every great mac and cheese.</p>
+          <p><strong style="color:var(--flame);">Velouté</strong> — Butter, flour, light stock. Elegant and endlessly adaptable.</p>
+          <p><strong style="color:var(--flame);">Espagnole</strong> — Brown stock, mirepoix, tomato. The darkest and richest of the five.</p>
+          <p><strong style="color:var(--flame);">Sauce Tomat</strong> — Tomatoes cooked low and slow with aromatics until they surrender.</p>
+          <p style="margin-bottom:0;"><strong style="color:var(--flame);">Hollandaise</strong> — Egg yolks and butter. Temperamental, rewarding, worth every attempt.</p>
+        </div>
+      </div>
+
+      <div class="sidebar-box">
+        <div class="sb-header">Fire & Wine Pairing</div>
+        <div class="sb-body">
+          <p><strong style="color:var(--flame);">Roast chicken</strong> → Chardonnay or Pinot Noir</p>
+          <p><strong style="color:var(--flame);">Braised lamb</strong> → Rioja or Côtes du Rhône</p>
+          <p><strong style="color:var(--flame);">Grilled fish</strong> → Muscadet or Vermentino</p>
+          <p><strong style="color:var(--flame);">Pasta al pomodoro</strong> → Chianti Classico</p>
+          <p><strong style="color:var(--flame);">Steak</strong> → Cabernet or Malbec</p>
+          <p style="margin-bottom:0;"><strong style="color:var(--flame);">Tarte Tatin</strong> → Sauternes or demi-sec Vouvray</p>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+
+  <footer>
+    <div class="footer-title">The Hearthside Cooking Guide</div>
+    <p>All recipes, techniques, and opinions expressed in this guide are presented for educational and entertainment purposes only.</p>
+    <p>The Hearthside Cooking Guide is a fictional publication. All awards, chefs, statistics, and establishments mentioned are entirely invented.<br>
+    Cooking times may vary. Results may differ. The caramel will still burn if you look away. This is not our fault.</p>
+    <p>© 2024 Hearthside Publications, a Division of Entirely Made-Up Media Ltd. All rights reserved, real or imaginary.</p>
+    <a href="disclaimer.html" class="learn-btn">Learn More</a>
+  </footer>
+
+</body>
+</html>
