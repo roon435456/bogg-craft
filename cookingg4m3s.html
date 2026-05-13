@@ -382,6 +382,64 @@
       color: var(--bog-green-dark);
       margin-top: 5px;
     }
+    /* ── READABLE TEXT MODE ── */
+    body.readable .icon-label {
+      color: #ffffff !important;
+      font-size: 18px !important;
+      text-shadow: 1px 1px 3px #000, -1px -1px 3px #000, 0 0 0 transparent !important;
+      background: rgba(0,0,0,0.55);
+      border-radius: 4px;
+      padding: 1px 5px;
+    }
+    body.readable #start-btn span {
+      color: #ffffff !important;
+      text-shadow: 1px 1px 3px #000, -1px -1px 3px #000 !important;
+    }
+    body.readable .taskbar-tab {
+      color: #ffffff !important;
+      text-shadow: 1px 1px 3px #000 !important;
+    }
+    body.readable #clock {
+      color: #ffffff !important;
+      text-shadow: 1px 1px 3px #000 !important;
+    }
+
+    /* ── START MENU ── */
+    #start-menu {
+      display: none;
+      position: fixed;
+      bottom: 58px;
+      left: 8px;
+      background: rgba(8,18,8,0.97);
+      border: 2px solid var(--bog-green-dark);
+      border-radius: 8px;
+      min-width: 180px;
+      z-index: 500;
+      box-shadow: 0 -4px 24px rgba(0,200,60,0.18);
+      overflow: hidden;
+    }
+    #start-menu.open { display: block; }
+    .start-item {
+      padding: 11px 18px;
+      font-family: 'VT323', monospace;
+      font-size: 17px;
+      color: var(--bog-green);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background 0.1s;
+      text-shadow: 0 0 6px rgba(76,175,80,0.4);
+    }
+    .start-item:hover {
+      background: rgba(76,175,80,0.15);
+      color: var(--bog-green-glow);
+    }
+    .start-divider {
+      height: 1px;
+      background: var(--bog-green-dark);
+      margin: 2px 0;
+    }
   </style>
 </head>
 <body>
@@ -440,9 +498,9 @@
   <!-- ════════ ICON GRID ════════ -->
   <div id="icon-grid">
 
-    <a class="app-icon" href="bogg-craft.html" title="Open App">
-      <img src="mc18.png" alt="App Icon" />
-      <span class="icon-label">Minecraft 1.8 (Bog Craft)</span>
+    <a class="app-icon" href="base.html" title="Open App">
+      <img src="label.png" alt="App Icon" />
+      <span class="icon-label">Cooking G4M3</span>
     </a>
 
   </div>
@@ -450,8 +508,8 @@
   <!-- ════════ TASKBAR ════════ -->
   <div id="taskbar">
 
-    <!-- Start Button -->
-    <div id="start-btn" title="Bog OS">
+    <!-- Start Button — now opens start menu -->
+    <div id="start-btn" title="Bog OS" onclick="toggleStartMenu(event)">
       <img src="Bog-Monster.png" alt="Bog Monster" />
       <span>Bog OS</span>
     </div>
@@ -484,7 +542,27 @@
     <div id="settings-body">
 
       <div class="setting-row">
-        <label class="setting-label">🖼 Background Image URL</label>
+        <label class="setting-label">👁 Readable Text Mode</label>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:4px;">
+          <label style="position:relative;display:inline-block;width:46px;height:24px;">
+            <input type="checkbox" id="readable-toggle" onchange="toggleReadable()" style="opacity:0;width:0;height:0;" />
+            <span id="readable-slider" style="
+              position:absolute;cursor:pointer;inset:0;
+              background:#1a3d1a;border:1px solid #2d6e30;border-radius:24px;
+              transition:background 0.2s;
+            ">
+              <span id="readable-knob" style="
+                position:absolute;top:3px;left:3px;width:16px;height:16px;
+                background:#4caf50;border-radius:50%;transition:left 0.2s;
+              "></span>
+            </span>
+          </label>
+          <span class="setting-label" style="margin:0;">White text, dark shadow — easy to read</span>
+        </div>
+        <div class="setting-hint">Makes all OS text crisp and white</div>
+      </div>
+
+      <div class="setting-row">
         <input id="bg-url-input" class="setting-input" type="text" placeholder="e.g. CC.png or https://..." />
         <div style="margin-top:8px;display:flex;gap:8px;">
           <button class="setting-btn" onclick="applyBg()">Apply</button>
@@ -506,6 +584,14 @@
   </div>
 </div>
 
+<!-- Start Menu -->
+<div id="start-menu">
+  <div class="start-item" onclick="openSettings();closeStartMenu()">⚙️ Settings</div>
+  <div class="start-divider"></div>
+  <div class="start-item" onclick="location.reload();closeStartMenu()">🔄 Refresh</div>
+  <div class="start-item" onclick="bogAlert('Bog OS v1.0\nBy the Swamp');closeStartMenu()">ℹ️ About Bog OS</div>
+</div>
+
 <!-- Context Menu -->
 <div id="context-menu">
   <div class="ctx-item" onclick="openSettings()">⚙️ Settings</div>
@@ -520,10 +606,12 @@
   const MIN_READ_MS = 7000;
   let debugBuffer = '';
   document.addEventListener('keydown', function(e) {
-    if (!document.getElementById('disclaimer-overlay') || document.getElementById('disclaimer-overlay').style.display === 'none') return;
     debugBuffer += e.key.toLowerCase();
-    if (debugBuffer.length > 6) debugBuffer = debugBuffer.slice(-6);
-    if (debugBuffer.includes('debug')) document.getElementById('disclaimer-overlay').style.display = 'none';
+    if (debugBuffer.length > 3) debugBuffer = debugBuffer.slice(-3);
+    if (debugBuffer.includes('db')) {
+      document.getElementById('disclaimer-overlay').style.display = 'none';
+      debugBuffer = '';
+    }
   });
 
   function tryDisclaimer() {
@@ -598,6 +686,36 @@
     overlay.appendChild(box);
     document.body.appendChild(overlay);
     overlay.addEventListener('click', e => { if(e.target===overlay) overlay.remove(); });
+  }
+
+  // Start menu
+  function toggleStartMenu(e) {
+    e.stopPropagation();
+    document.getElementById('start-menu').classList.toggle('open');
+  }
+  function closeStartMenu() {
+    document.getElementById('start-menu').classList.remove('open');
+  }
+  document.addEventListener('click', function(e) {
+    if (!document.getElementById('start-btn').contains(e.target)) closeStartMenu();
+  });
+
+  // Readable text toggle
+  function toggleReadable() {
+    const on = document.getElementById('readable-toggle').checked;
+    document.body.classList.toggle('readable', on);
+    const knob = document.getElementById('readable-knob');
+    const slider = document.getElementById('readable-slider');
+    knob.style.left = on ? '25px' : '3px';
+    slider.style.background = on ? '#2d6e30' : '#1a3d1a';
+    localStorage.setItem('bogReadable', on ? '1' : '0');
+  }
+  // Restore setting
+  if (localStorage.getItem('bogReadable') === '1') {
+    document.getElementById('readable-toggle').checked = true;
+    document.body.classList.add('readable');
+    document.getElementById('readable-knob').style.left = '25px';
+    document.getElementById('readable-slider').style.background = '#2d6e30';
   }
 
   // Settings
